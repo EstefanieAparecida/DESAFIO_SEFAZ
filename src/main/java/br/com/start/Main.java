@@ -6,9 +6,9 @@ public class Main {
 	
 	public static void main (String[] args) {
 		
-		br.com.start.h2memory.H2MemoryDatabase H2MemoryDatabase = new H2MemoryDatabase();
+	    H2MemoryDatabase H2MemoryDatabase = new H2MemoryDatabase();
 		H2MemoryDatabase.connect();
-			
+		
 	}
 
 	

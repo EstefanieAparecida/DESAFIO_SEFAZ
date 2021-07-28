@@ -14,31 +14,38 @@ public class H2MemoryDatabase {
 	private static final String DB_PASSWORD = "";
 
 	public static void connect() {
+		Connection connection = getDBConnection();
 		try {
-			insertWithStatement();
-
+			connection.setAutoCommit(false);
+			createTable(connection);
+			insertWithStatement(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private static void insertWithStatement() throws SQLException {
-		Connection connection = getDBConnection();
+	public static void createTable(Connection connection) throws SQLException {
+		Statement stmt = null;
+		stmt = connection.createStatement();
+		stmt.execute("CREATE TABLE PERSON(id int primary key, name varchar(255), email varchar(50), senha varchar(100))");
+		stmt.close();
+		connection.commit();
+	}
+
+	private static void insertWithStatement(Connection connection) throws SQLException {
+
 		Statement stmt = null;
 		try {
-			connection.setAutoCommit(false);
 			stmt = connection.createStatement();
-			stmt.execute("CREATE TABLE PERSON(id int primary key, name varchar(255))");
-			stmt.execute("INSERT INTO PERSON(id, name) VALUES(1, 'Anju')");
-			stmt.execute("INSERT INTO PERSON(id, name) VALUES(2, 'Sonia')");
-			stmt.execute("INSERT INTO PERSON(id, name) VALUES(3, 'Asha')");
-
+			stmt.execute("INSERT INTO PERSON(id, name, email, senha) VALUES (1, 'Anju', 'Anjuslove@gmail.com', '12345')");
+			stmt.execute("INSERT INTO PERSON(id, name, email, senha) VALUES (2, 'Sonia','Sonialove@gmail.com','54321')");
+			stmt.execute("INSERT INTO PERSON(id, name, email, senha) VALUES (3, 'Asha', 'Ashaslove@gmail.com', '76237')");
 			ResultSet rs = stmt.executeQuery("select * from PERSON");
-			System.out.println("H2 In-Memory Database inserted through Statement");
+			System.out.println("Dados da Tabela");
 			while (rs.next()) {
-				System.out.println("Id " + rs.getInt("id") + " Name " + rs.getString("name"));
+				System.out.println("ID:"+ rs.getString("id")+ " Nome:" + rs.getString("name") + " Email:" + rs.getString("email") + " Senha:"
+						+ rs.getString("senha"));
 			}
-
 			stmt.execute("DROP TABLE PERSON");
 			stmt.close();
 			connection.commit();
