@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import br.com.start.entitys.User;
+
 public class H2MemoryDatabase {
 
 	private static final String DB_DRIVER = "org.h2.Driver";
@@ -27,7 +29,8 @@ public class H2MemoryDatabase {
 	public static void createTable(Connection connection) throws SQLException {
 		Statement stmt = null;
 		stmt = connection.createStatement();
-		stmt.execute("CREATE TABLE PERSON(id int primary key, name varchar(255), email varchar(50), senha varchar(100))");
+		stmt.execute(
+				"CREATE TABLE USER(id long primary key, name varchar(255), email varchar(50), password varchar(100))");
 		stmt.close();
 		connection.commit();
 	}
@@ -37,16 +40,24 @@ public class H2MemoryDatabase {
 		Statement stmt = null;
 		try {
 			stmt = connection.createStatement();
-			stmt.execute("INSERT INTO PERSON(id, name, email, senha) VALUES (1, 'Anju', 'Anjuslove@gmail.com', '12345')");
-			stmt.execute("INSERT INTO PERSON(id, name, email, senha) VALUES (2, 'Sonia','Sonialove@gmail.com','54321')");
-			stmt.execute("INSERT INTO PERSON(id, name, email, senha) VALUES (3, 'Asha', 'Ashaslove@gmail.com', '76237')");
-			ResultSet rs = stmt.executeQuery("select * from PERSON");
-			System.out.println("Dados da Tabela");
+			stmt.execute(
+					"INSERT INTO USER(id, name, email, password) VALUES (1, 'Anju', 'Anjuslove@gmail.com', '12345')");
+			stmt.execute(
+					"INSERT INTO USER(id, name, email, password) VALUES (2, 'Sonia','Sonialove@gmail.com','54321')");
+			stmt.execute(
+					"INSERT INTO USER(id, name, email, password) VALUES (3, 'Asha', 'Ashaslove@gmail.com', '76237')");
+			ResultSet rs = stmt.executeQuery("select * from USER");
+			System.out.println("Dados do User");
 			while (rs.next()) {
-				System.out.println("ID:"+ rs.getString("id")+ " Nome:" + rs.getString("name") + " Email:" + rs.getString("email") + " Senha:"
-						+ rs.getString("senha"));
+				User user = new User();
+				user.setId(rs.getLong("id"));
+				user.setName(rs.getString("name"));
+				user.setEmail(rs.getString("email"));
+				user.setPassword(rs.getString("password"));
+
+				System.out.println(user.toString());
 			}
-			stmt.execute("DROP TABLE PERSON");
+			stmt.execute("DROP TABLE USER");
 			stmt.close();
 			connection.commit();
 		} catch (SQLException e) {
